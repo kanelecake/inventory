@@ -1,0 +1,44 @@
+.logo {
+  width: 8rem;
+  margin: 1rem !important;
+}
+
+body {
+  background-color: var(--color-background);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-background-third);
+  min-width: 400px;
+  max-width: 400px;
+  border-radius: 1rem;
+  margin: 4rem auto;
+  padding: 2rem 2rem 3rem;
+  gap: .2rem;
+
+  & h1 {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    color: var(--color-header);
+  }
+
+  & p {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+  }
+
+  & .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-top: .5rem;
+    gap: .6rem;
+  }
+
+  & .button {
+    margin-top: 1rem;
+    color: var(--color-btn-text);
+  }
+}
