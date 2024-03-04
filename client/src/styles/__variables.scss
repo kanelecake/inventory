@@ -1,3 +1,9 @@
+@use "sass:color";
+
+@function toRGB($color) {
+  @return color.red($color) + ", " + color.green($color) + ", " + color.blue($color);
+}
+
 $color-gray: #4e5057;
 $color-gray-light: #a1a4b0;
 $color-gray-lightest: #fcfcfc;
@@ -9,9 +15,12 @@ $color-green: #05664a;
 $color-blue: #2179aa;
 
 :root {
+  --color-primary: #{$color-brown};
+
   --color-background: #{$color-gray-lightest};
   --color-background-secondary: #{$color-brown};
-  --color-background-third: #{$color-cream-light};
+  --color-background-third: #{$color-white};
+  --color-background-forth: #{$color-cream-light};
 
   --color-btn-text: #{$color-white};
   --color-btn-background: #{$color-brown};
@@ -21,6 +30,14 @@ $color-blue: #2179aa;
   --color-link: #{$color-blue};
 
   --color-text: #{$color-gray};
+  --color-text-white: #{$color-white};
   --color-text-secondary: #{$color-gray-light};
   --color-header: #{$color-brown};
+
+  --color-text-border: rgba(#{toRGB($color-gray-light)}, 0.4);
+  --color-border: rgba(#{toRGB($color-gray-light)}, 0.2);
+
+  --color-mark: #e37d15;
+  --color-mark-approved: #308117;
+  --color-mark-canceled: #{$color-gray-light};
 }
