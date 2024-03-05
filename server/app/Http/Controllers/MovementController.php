@@ -14,7 +14,7 @@ class MovementController extends Controller
             'inventory_number' => ['required', 'regex:/^[a-zA-Z0-9]+$/'],
             'from' => ['required', 'regex:/^[а-яА-Я0-9][а-яА-Я0-9\- ]+[а-яА-Я0-9]$/'],
             'to' => ['required', 'regex:/^[а-яА-Я0-9][а-яА-Я0-9\- ]+[а-яА-Я0-9]$/'],
-            'item_name' => ['required', 'regex:/^[а-яА-Я0-9 ]+$/'],
+            'item_name' => ['required'],
         ]);
 
         $movement = Movement::create([
@@ -51,12 +51,12 @@ class MovementController extends Controller
     // updateStatus используется для обновления статуса перемещения
     public function updateStatus(Request $request) : Response {
         $attr = $request->validate([
-            'id' => 'required|numeric|in:0,1,2',
-            'status' => 'required|numeric',
+            'id' => 'required|numeric',
+            'status' => 'required|numeric|in:0,1,2',
         ]);
 
         Movement::where('id', $attr['id'])
-            ->update('status', $attr['status']);
+            ->update(['status' => $attr['status']]);
 
         return response([
             'ok'

@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Movement extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'inventory_number',
         'item_name',

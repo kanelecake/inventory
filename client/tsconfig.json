@@ -17,6 +17,7 @@
     /* 💅 Beauty paths 💅 */
     "baseUrl": "./src",
     "paths": {
+      "@api/*": ["./api/*"],
       "@styles/*": ["./styles/*"],
       "@components/*": ["./components/*"],
       "@routes/*": ["./routes/*"],
