@@ -42,7 +42,7 @@ import MovementItem from "@components/MovementItem.vue";
           <div class="text-subtitle-1 text-medium-emphasis">Что перемещается?</div>
           <v-text-field
               v-model="fields.to"
-              :rules="[rules.required, rules.destination]"
+              :rules="[rules.required, rules.item_name]"
               color="var(--color-primary)"
               base-color="var(--color-text-border)"
               density="compact"
@@ -146,6 +146,7 @@ export default {
       rules: {
         required: (value: string | undefined) => !!value || 'Это поле является обязательным',
         inv_number: (value: string | undefined) => (value || '').match(/^[a-zA-Z0-9]+$/) || 'Неверный инвентарный или серийный номер',
+        item_name: (value: string | undefined) => (value || '').match(/^[а-яА-Я0-9 ]+$/) || 'Неверное имя оборудования',
         destination: (value: string | undefined) => (value || '').match(/^[а-яА-Я0-9][а-яА-Я0-9\- ]+[а-яА-Я0-9]$/) || 'Неверное место перемещения',
       }
     };
