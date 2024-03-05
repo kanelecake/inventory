@@ -1,0 +1,5 @@
+export const AUTH_LOGIN = "AUTH_LOGIN";
+export const AUTH_CREATE_TEST_USER = "AUTH_CREATE_TEST_USER";
+
+export const AUTH_SUCCESS = "AUTH_SUCCESS";
+export const AUTH_ERROR = "AUTH_ERROR";

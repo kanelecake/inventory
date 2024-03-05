@@ -12,6 +12,7 @@ import 'vuetify/styles';
 import { createVuetify } from "vuetify";
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
+import stores from "@stores/index.ts";
 
 const vuetify = createVuetify({
     components,
@@ -19,6 +20,7 @@ const vuetify = createVuetify({
 });
 
 createApp(App)
+    .use(stores)
     .use(routes)
     .use(vuetify)
     .mount('#app');
