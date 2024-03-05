@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import "@styles/views/Welcome.scss";
 import Logo from "@components/Logo.vue";
+import {useRouter} from "vue-router";
+
+if (localStorage.getItem('token')) {
+  const route = useRouter();
+  route.push({ name: 'Home' });
+}
 </script>
 
 <template>
@@ -21,7 +27,7 @@ import Logo from "@components/Logo.vue";
       <!-- Форма входа в аккаунт -->
       <v-form ref="form" class="auth-form" @submit="submitForm" @update:modelValue="validate">
         <h1>Добро пожаловать</h1>
-        <p>Введите логин и пароль для продолжения <br /> (Тестовый логин: test, пароль: test)</p>
+        <p>Введите логин и пароль для продолжения <br /> (Тестовый логин: test, пароль: 12345678)</p>
 
         <!-- Форма входа -->
         <v-item-group class="form-group">
@@ -51,6 +57,8 @@ import Logo from "@components/Logo.vue";
         </v-item-group>
 
         <v-btn
+            :disabled="isLoading"
+            :loading="isLoading"
             rounded="lg"
             size="large"
             color="var(--color-btn-background-secondary)"
@@ -63,7 +71,17 @@ import Logo from "@components/Logo.vue";
 </template>
 
 <script lang="ts">
+// @ts-ignore
+import {mapGetters} from "vuex";
+import {AUTH_LOGIN} from "@stores/actions/auth.ts";
+
 export default {
+  computed: {
+    ...mapGetters(["authStatus", "isAuthenticated"]),
+    isLoading: function() {
+      return this.authStatus === "loading";
+    }
+  },
   data() {
     return {
       isValid: false,
@@ -84,7 +102,11 @@ export default {
     },
     submitForm () {
       if (this.isValid) {
-        this.$router.push({ name: 'Home' });
+        const { username, password } = this.fields;
+        // @ts-ignore
+        this.$store!.dispatch(AUTH_LOGIN, { username, password }).then(() => {
+          this.$router.push("/home");
+        });
       }
     },
   },

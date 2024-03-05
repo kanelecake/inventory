@@ -3,7 +3,7 @@ import {
     MOVEMENT_CREATE,
     MOVEMENT_DATA,
     MOVEMENT_ERROR,
-    MOVEMENT_GET_LIST,
+    MOVEMENT_GET_LIST, MOVEMENT_GET_MORE, MOVEMENT_MORE_DATA,
     MOVEMENT_SUCCESS, MOVEMENT_UPDATE_STATUS
 } from "@stores/actions/movements.ts";
 import api from "@api/index.ts";
@@ -11,47 +11,65 @@ import api from "@api/index.ts";
 type MovementState = {
     status: string,
     movements: MovementModel[],
+    newMovements: MovementModel[],
 };
 
 const state: MovementState = {
     status: "",
     movements: [],
+    newMovements: [],
 };
 
 const getters = {
-    getMovements: (state: MovementState) => state.movements,
+    getMovements: (state: MovementState) => state.movements as MovementModel[],
+    getNewMovements: (state: MovementState) => state.newMovements as MovementModel[],
     isDataLoaded: (state: MovementState) => state.status != "loading",
+    isError: (state: MovementState) => {
+        console.log(state.status);
+        return state.status == "error"
+    },
 }
 
 const actions = {
     // Создает новое перемещение оборудования
-    [MOVEMENT_CREATE]: ({ commit, dispatch } : { commit: Function, dispatch: Function }, data: MovementCreateRequest) => {
+    [MOVEMENT_CREATE]: async ({ commit } : { commit: Function, dispatch?: Function }, data: MovementCreateRequest) => {
         commit(MOVEMENT_CREATE);
-        api.movement.create(data)
+        await api.movement.create(data)
             .then((resp) => {
-                commit(MOVEMENT_DATA, resp);
+                commit(MOVEMENT_DATA, resp.data);
             })
             .catch(error => {
                commit(MOVEMENT_ERROR, error);
             });
     },
     // Получает список всех перемещений со смещением offset
-    [MOVEMENT_GET_LIST]: ({ commit, dispatch } : { commit: Function, dispatch: Function }, offset: number) => {
+    [MOVEMENT_GET_LIST]: async ({ commit } : { commit: Function, dispatch?: Function }, offset: number) => {
         commit(MOVEMENT_GET_LIST);
-        api.movement.getList(offset)
+        await api.movement.getList(offset)
             .then((resp) => {
-                commit(MOVEMENT_DATA, resp);
+                commit(MOVEMENT_DATA, resp.data);
+            })
+            .catch(error => {
+                commit(MOVEMENT_ERROR, error);
+            });
+    },
+    // Получает дополнительный список всех перемещений с offset
+    [MOVEMENT_GET_MORE]: async ({ commit } : { commit: Function, dispatch?: Function }, offset: number) => {
+        commit(MOVEMENT_GET_LIST);
+        await api.movement.getList(offset)
+            .then((resp) => {
+                commit(MOVEMENT_MORE_DATA, resp.data);
             })
             .catch(error => {
                 commit(MOVEMENT_ERROR, error);
             });
     },
     // Обновляет статус перемещения
-    [MOVEMENT_UPDATE_STATUS]: ({ commit, dispatch } : { commit: Function, dispatch: Function }, status: number) => {
+    [MOVEMENT_UPDATE_STATUS]: async ({ commit } : { commit: Function, dispatch?: Function }, status: number) => {
         commit(MOVEMENT_GET_LIST);
-        api.movement.updateStatus(status)
+        await api.movement.updateStatus(status)
             .then((resp) => {
-                commit(MOVEMENT_SUCCESS, resp);
+                commit(MOVEMENT_SUCCESS, resp.data);
             })
             .catch(error => {
                 commit(MOVEMENT_ERROR, error);
@@ -79,9 +97,14 @@ const mutations = {
         } else {
             state.movements.push((resp as { data: MovementModel }).data);
         }
-
     },
-    [MOVEMENT_ERROR]: (state: MovementState) => {
+    [MOVEMENT_MORE_DATA]: (state: MovementState, resp: unknown) => {
+        state.status = "success";
+        console.log(resp);
+        state.newMovements = (resp as { data: MovementModel[] }).data;
+    },
+    [MOVEMENT_ERROR]: (state: MovementState, error: Error) => {
+        console.log(error);
         state.status = "error";
     },
 };

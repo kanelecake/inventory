@@ -24,14 +24,13 @@ const getters = {
 const actions = {
     // Запрос на авторизацию
     [AUTH_LOGIN]: ({ commit } : { commit: Function, dispatch?: Function }, user: AuthRequest) => {
+        console.log(user);
         return new Promise((resolve, reject) => {
             commit(AUTH_LOGIN);
             api.auth.login(user.username, user.password)
-                .then((resp: unknown) => {
-                    const token = (resp as AuthResponse).token;
-
+                .then(resp => {
+                    const token = (resp.data as AuthResponse).token;
                     localStorage.setItem("token", token);
-                    axios.defaults.headers.common['Authorization'] = token;
                     commit(AUTH_SUCCESS, resp);
                     resolve(resp);
                 })
@@ -47,9 +46,8 @@ const actions = {
         return new Promise((resolve, reject) => {
             commit(AUTH_LOGIN);
             api.auth.createTestAccount()
-                .then((resp: unknown) => {
-                    const token = (resp as AuthResponse).token;
-
+                .then((resp) => {
+                    const token = (resp.data as AuthResponse).token;
                     localStorage.setItem("token", token);
                     axios.defaults.headers.common['Authorization'] = token;
                     commit(AUTH_SUCCESS, resp);
