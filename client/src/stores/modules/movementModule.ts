@@ -1,4 +1,9 @@
-import {MovementCreateRequest, MovementModel} from "@api/types/movement";
+import {AxiosError} from "axios";
+
+import api from "@api/index.ts";
+
+import { InfiniteScrollDoneFn } from "@localTypes/vuetifyExtended.ts";
+import { CreateMovementRequest, Movement } from "@api/types/movement";
 import {
     MOVEMENT_CREATE,
     MOVEMENT_DATA,
@@ -6,16 +11,13 @@ import {
     MOVEMENT_GET_LIST,
     MOVEMENT_SUCCESS,
     MOVEMENT_UPDATE_STATUS,
-} from "@stores/actions/movements.ts";
-import api from "@api/index.ts";
-import {InfiniteScrollDoneFn} from "@types/vuetifyExtended";
-import {AxiosError} from "axios";
+} from "@stores/actions/movementActions.ts";
 
 type MovementState = {
     status: string,
     error: string,
-    movements: MovementModel[],
-    newMovements: MovementModel[],
+    movements: Movement[],
+    newMovements: Movement[],
 };
 
 const state: MovementState = {
@@ -26,8 +28,8 @@ const state: MovementState = {
 };
 
 const getters = {
-    getMovements: (state: MovementState) => state.movements as MovementModel[],
-    getNewMovements: (state: MovementState) => state.newMovements as MovementModel[],
+    getMovements: (state: MovementState) => state.movements as Movement[],
+    getNewMovements: (state: MovementState) => state.newMovements as Movement[],
     isDataLoaded: (state: MovementState) => state.status != "loading",
     isError: (state: MovementState) => state.status == "error",
     getError: (state: MovementState) => state.error,
@@ -35,7 +37,7 @@ const getters = {
 
 const actions = {
     // Создает новое перемещение оборудования
-    [MOVEMENT_CREATE]: async ({ commit } : { commit: Function, dispatch?: Function }, data: MovementCreateRequest) => {
+    [MOVEMENT_CREATE]: async ({ commit } : { commit: Function, dispatch?: Function }, data: CreateMovementRequest) => {
         commit(MOVEMENT_CREATE);
         await api.movement.create(data)
             .then((resp) => {
@@ -92,10 +94,10 @@ const mutations = {
 
         // Проверяем, является ли ответ сервера массивом.
         // Если является то разворачиваем его и добавляем в общую базу
-        if (Array.isArray((resp as { data: MovementModel | MovementModel[] }).data)) {
-            state.movements.push(...(resp as { data: MovementModel[] }).data);
+        if (Array.isArray((resp as { data: Movement | Movement[] }).data)) {
+            state.movements.push(...(resp as { data: Movement[] }).data);
         } else {
-            state.movements.push((resp as { data: MovementModel }).data);
+            state.movements.push((resp as { data: Movement }).data);
         }
     },
     [MOVEMENT_ERROR]: (state: MovementState, error: AxiosError) => {

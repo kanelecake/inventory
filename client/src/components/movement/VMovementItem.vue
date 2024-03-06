@@ -1,69 +1,56 @@
+<script setup lang="ts">
+import "./VMovementItem.scss";
+
+import {PropType} from "vue";
+import {Movement} from "@api/types/movement";
+
+defineProps({
+  data: { type: Object as PropType<Movement>, required: true },
+});
+</script>
+
 <template>
-  <div class="movement-item">
+  <div class="movement__item">
+    <!-- Заголовок заявки -->
     <div class="header">
-      <h3>Заявка #{{ data.id }}</h3>
-      <!-- Выполняющая заявка на перемещение -->
-      <template v-if="data.status === 0">
-        <span class="mark">Выполняется</span>
-      </template>
-      <!-- Завершенная заявка на перемещение -->
-      <template v-if="data.status === 1">
-        <span class="mark approved">Завершено</span>
-      </template>
-      <!-- Отклоненная заявка на перемещение -->
-      <template v-if="data.status === 2">
-        <span class="mark rejected">Отклонена</span>
-      </template>
+      <h3>Заявка на перемещение #{{ data.id }}</h3>
+      <VMovementStatus :status="data.status" />
     </div>
 
-    <span>Перенос <b>{{ data.item_name }}</b> с инвентарным/серийным номером <b>{{ data.inventory_number }}</b> из <b>{{ data.from }}</b> в <b>{{ data.to }}</b></span>
+    <!-- Текст заявки -->
+    <span class="content">
+      Перенос <b>{{ data.item_name }}</b>
+      с инвентарным/серийным номером <b>{{ data.inventory_number }}</b>
+      из кабинета <b>{{ data.from }}</b>
+      в <b>{{ data.to }}</b>
+    </span>
 
-    <v-card class="mt-4"
+    <!-- Дополнительная информация -->
+    <v-card
+        class="mt-4"
         color="surface-variant"
         variant="tonal">
       <v-card-text class="text-medium-emphasis text-caption">
         Выполнивший перемещение: <b>{{ data.fullname }}</b><br />
-        Дата выполнения: <b>{{ new Date(data.moved_at * 1000).toLocaleDateString('ru-ru', { weekday:"long", year:"numeric", month:"short", day:"numeric"})  }}</b>
+        Дата выполнения: <b>{{ convertDateFromTimestamp(data.moved_at) }}</b>
       </v-card-text>
     </v-card>
   </div>
 </template>
 
-<style lang="scss">
-.movement-item {
-  padding: 2rem 2rem;
+<script lang="ts">
+import VMovementStatus from "@components/movement/VMovementStatus.vue";
 
-  & .header {
-    display: flex;
-    flex-direction: row;
-    gap: .4rem;
-    align-items: center;
-    margin-bottom: .5rem;
-
-    & .mark {
-      color: var(--color-text-white);
-      background-color: var(--color-mark);
-      padding: .1rem .4rem;
-      border-radius: .2rem;
-
-      &.approved {
-        background-color: var(--color-mark-approved) !important;
-      }
-
-      &.rejected {
-        background-color: var(--color-mark-canceled) !important;
-      }
+export default {
+  components: {VMovementStatus},
+  methods: {
+    /** Конвертирует дату из временной метки **/
+    convertDateFromTimestamp(timestamp: number) : string {
+      return new Date(timestamp * 1000)
+          .toLocaleDateString('ru-ru', {
+            weekday:"long", year:"numeric", month:"short", day:"numeric"
+          });
     }
   }
-
-  & span {
-    color: var(--color-text);
-  }
-}
-</style>
-
-<script lang="ts">
-export default {
-  props: ['data'],
 }
 </script>

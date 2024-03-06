@@ -82,7 +82,7 @@ if (localStorage.getItem('token')) {
 <script lang="ts">
 // @ts-ignore
 import {mapGetters} from "vuex";
-import {AUTH_CREATE_TEST_USER, AUTH_LOGIN} from "@stores/actions/auth.ts";
+import {AUTH_CREATE_TEST_USER, AUTH_LOGIN} from "@stores/actions/authActions.ts";
 
 export default {
   computed: {

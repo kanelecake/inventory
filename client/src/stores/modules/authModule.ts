@@ -1,7 +1,7 @@
 import api from "@api/index.ts";
-import {AUTH_CREATE_TEST_USER, AUTH_ERROR, AUTH_LOGIN, AUTH_SUCCESS} from "@stores/actions/auth.ts";
+import {AUTH_CREATE_TEST_USER, AUTH_ERROR, AUTH_LOGIN, AUTH_SUCCESS} from "@stores/actions/authActions.ts";
 
-import {AuthRequest, AuthResponse} from "@api/types/auth";
+import {SignInRequest, AuthResponse} from "@api/types/auth";
 import axios from "axios";
 
 type AuthState = {
@@ -23,7 +23,7 @@ const getters = {
 
 const actions = {
     // Запрос на авторизацию
-    [AUTH_LOGIN]: ({ commit } : { commit: Function, dispatch?: Function }, user: AuthRequest) => {
+    [AUTH_LOGIN]: ({ commit } : { commit: Function, dispatch?: Function }, user: SignInRequest) => {
         console.log(user);
         return new Promise((resolve, reject) => {
             commit(AUTH_LOGIN);
@@ -45,7 +45,7 @@ const actions = {
     [AUTH_CREATE_TEST_USER]: ({ commit } : { commit: Function, dispatch?: Function }) => {
         return new Promise((resolve, reject) => {
             commit(AUTH_LOGIN);
-            api.auth.createTestAccount()
+            api.auth.createTestUser()
                 .then((resp) => {
                     const token = (resp.data as AuthResponse).token;
                     localStorage.setItem("token", token);

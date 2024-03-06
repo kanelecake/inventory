@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import "@styles/views/Home.scss";
-import Logo from "@components/Logo.vue";
-import {ArrowRight, NotepadTextDashed} from "lucide-vue-next";
-import MovementItem from "@components/MovementItem.vue";
-
 // @ts-ignore
-import {useStore} from "vuex";
-import {MOVEMENT_GET_LIST} from "@stores/actions/movements.ts";
+import { useStore } from "vuex";
+import { ArrowRight, NotepadTextDashed } from "lucide-vue-next";
 
-const store = useStore();
-store.dispatch(MOVEMENT_GET_LIST, { offset: 0 });
+import "@styles/views/Home.scss";
+
+import Logo from "@components/Logo.vue";
+import MovementItem from "@components/movement/VMovementItem.vue";
 </script>
 
 <template>
@@ -28,7 +25,11 @@ store.dispatch(MOVEMENT_GET_LIST, { offset: 0 });
     <!-- Основное тело -->
     <v-main class="main">
       <!-- Форма входа в аккаунт -->
-      <v-form ref="form" class="input-form" @submit="submitForm" @update:modelValue="validate">
+      <v-form
+          ref="form"
+          class="input-form"
+          @submit="submitForm"
+          @update:modelValue="validate">
         <h2>Оформить перемещение</h2>
 
         <!-- Форма входа -->
@@ -103,7 +104,7 @@ store.dispatch(MOVEMENT_GET_LIST, { offset: 0 });
         <MovementItem
             v-for="(item, index) in items"
             :key="index"
-            :data="item" />
+            :data="item"/>
 
         <template v-slot:empty class="py-4 gp">
           <v-alert
@@ -120,8 +121,8 @@ store.dispatch(MOVEMENT_GET_LIST, { offset: 0 });
 <script lang="ts">
 // @ts-ignore
 import { mapGetters } from "vuex";
-import {MOVEMENT_CREATE, MOVEMENT_GET_LIST} from "@stores/actions/movements.ts";
-import {InfiniteScrollDoneFn, InfiniteScrollSide } from "@types/vuetifyExtended";
+import {MOVEMENT_CREATE, MOVEMENT_GET_LIST} from "@stores/actions/movementActions.ts";
+import { InfiniteScrollDoneFn, InfiniteScrollSide } from "../localTypes/vuetifyExtended.ts";
 
 export default {
   watch: {
@@ -141,7 +142,7 @@ export default {
   },
   data() {
     return {
-      currentOffset: 10,
+      currentOffset: 0,
       isValid: false,
       fields: {
         inventory_number: '',
@@ -164,13 +165,17 @@ export default {
     },
     submitForm () {
       if (this.isValid) {
+        // @ts-ignore
         this.$store.dispatch(MOVEMENT_CREATE, this.fields);
 
+        // @ts-ignore
         this.$refs.form.reset();
+        // @ts-ignore
         this.$refs.form.resetValidation();
       }
     },
     loadMoreData({ done } : { side: InfiniteScrollSide, done: InfiniteScrollDoneFn }) {
+      // @ts-ignore
       this.$store.dispatch(MOVEMENT_GET_LIST, { offset: this.currentOffset, done: done });
       this.currentOffset += 10;
     }

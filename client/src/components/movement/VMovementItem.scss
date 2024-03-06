@@ -1,0 +1,16 @@
+.movement__item {
+  padding: 2rem 2rem;
+
+  & .header {
+    display: flex;
+    flex-direction: row;
+    gap: .4rem;
+    align-items: center;
+    margin-bottom: .5rem;
+  }
+
+  & .content {
+    color: var(--color-text);
+  }
+}
+

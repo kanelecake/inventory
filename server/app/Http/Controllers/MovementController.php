@@ -37,8 +37,8 @@ class MovementController extends Controller
     // getMovements используется для получения списка перемещений
     public function getList(Request $request) : Response {
         $attr = $request->validate([
-            'offset' => 'required|numeric',
-            'count' => 'required|numeric',
+            'offset' => 'required|numeric|min:0',
+            'count' => 'required|numeric|max:10',
         ]);
 
         $movements = Movement::join('users', 'movements.user_id', '=', 'users.id')

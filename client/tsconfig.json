@@ -23,7 +23,7 @@
       "@routes/*": ["./routes/*"],
       "@stores/*": ["./stores/*"],
       "@views/*": ["./views/*"],
-      "@types/*": ["./types/*"],
+      "@localTypes/*": ["./localTypes/*"],
     },
 
     /* Linting */
