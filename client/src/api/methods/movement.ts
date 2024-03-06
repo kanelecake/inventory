@@ -1,8 +1,9 @@
 import axios from "axios";
 import {MovementCreateRequest} from "@api/types/movement";
+import {API_URL} from "../../global.ts";
 
 export function getList(offset: number) {
-    return axios.get('http://localhost/api/movement/getList', {
+    return axios.get(`${API_URL}/api/movement/getList`, {
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
@@ -14,7 +15,7 @@ export function getList(offset: number) {
 }
 
 export function create(data: MovementCreateRequest) {
-    return axios.post('http://localhost/api/movement/create', data, {
+    return axios.post(`${API_URL}/api/movement/create`, data, {
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
@@ -26,7 +27,7 @@ export function create(data: MovementCreateRequest) {
 // 1 - принято
 // 2 - отклонено
 export function updateStatus(status: number) {
-    return axios.patch('http://localhost/api/movement/status', {
+    return axios.patch(`${API_URL}/api/movement/status`, {
        status
     }, {
         headers: {

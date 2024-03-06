@@ -9,15 +9,18 @@ import {
 } from "@stores/actions/movements.ts";
 import api from "@api/index.ts";
 import {InfiniteScrollDoneFn} from "@types/vuetifyExtended";
+import {AxiosError} from "axios";
 
 type MovementState = {
     status: string,
+    error: string,
     movements: MovementModel[],
     newMovements: MovementModel[],
 };
 
 const state: MovementState = {
     status: "",
+    error: "",
     movements: [],
     newMovements: [],
 };
@@ -26,11 +29,9 @@ const getters = {
     getMovements: (state: MovementState) => state.movements as MovementModel[],
     getNewMovements: (state: MovementState) => state.newMovements as MovementModel[],
     isDataLoaded: (state: MovementState) => state.status != "loading",
-    isError: (state: MovementState) => {
-        console.log(state.status);
-        return state.status == "error"
-    },
-}
+    isError: (state: MovementState) => state.status == "error",
+    getError: (state: MovementState) => state.error,
+};
 
 const actions = {
     // Создает новое перемещение оборудования
@@ -51,13 +52,10 @@ const actions = {
             .then((resp) => {
                 if (done !== undefined) {
                     if (resp.data.data.length > 0) {
-                        console.log('ok');
                         done('ok');
                     } else {
-                        console.log('empty');
                         done('empty');
                     }
-                    console.log('ok');
                 }
                 commit(MOVEMENT_DATA, resp.data);
             })
@@ -100,9 +98,9 @@ const mutations = {
             state.movements.push((resp as { data: MovementModel }).data);
         }
     },
-    [MOVEMENT_ERROR]: (state: MovementState, error: Error) => {
-        console.log(error);
+    [MOVEMENT_ERROR]: (state: MovementState, error: AxiosError) => {
         state.status = "error";
+        state.error = error.response!.status.toString();
     },
 };
 

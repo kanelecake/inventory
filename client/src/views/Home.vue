@@ -121,11 +121,20 @@ store.dispatch(MOVEMENT_GET_LIST, { offset: 0 });
 // @ts-ignore
 import { mapGetters } from "vuex";
 import {MOVEMENT_CREATE, MOVEMENT_GET_LIST} from "@stores/actions/movements.ts";
-import {InfiniteScrollDoneFn, InfiniteScrollSide, InfiniteScrollStatus} from "@types/vuetifyExtended";
+import {InfiniteScrollDoneFn, InfiniteScrollSide } from "@types/vuetifyExtended";
 
 export default {
+  watch: {
+    getError: {
+      handler: function (val: string) {
+        if (val == '401') {
+          this.$router.push({ name: "Welcome" });
+        }
+      }
+    }
+  },
   computed: {
-    ...mapGetters(["getMovements", "isDataLoaded", "isError"]),
+    ...mapGetters(["getMovements", "isDataLoaded", "isError", "getError"]),
     items: function () {
       return this.getMovements;
     },

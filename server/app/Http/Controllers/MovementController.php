@@ -26,6 +26,9 @@ class MovementController extends Controller
             'user_id' => auth()->user()->id,
         ]);
 
+        $movement['fullname'] = auth()->user()->fullname;
+        $movement['status'] = 0;
+
         return response([
             'data' => $movement
         ], 201);

@@ -16,4 +16,10 @@ export default defineConfig({
       "@types": resolve(__dirname, './src/types'),
     },
   },
+  server: {
+    port: 5173,
+    strictPort: true,
+    host: true,
+    origin: 'http://0.0.0.0:5173'
+  }
 })

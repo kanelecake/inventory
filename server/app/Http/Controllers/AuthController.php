@@ -35,19 +35,27 @@ class AuthController extends Controller
     // TODO: ИСПОЛЬЗУЕТСЯ ДЛЯ ОТЛАДКИ, УДАЛИТЬ НА ПРОДЕ
     public function createTestUser() : Response
     {
-        $user = User::create([
-            'email' => 'test@test.ru',
-            'username' => 'test',
-            'password' => password_hash('12345678', PASSWORD_BCRYPT),
-            'fullname' => 'Test User',
-            'role' => 'admin',
-        ]);
+        try {
+            $user = User::firstOrCreate([
+                'email' => 'test@test.ru',
+                'username' => 'test',
+                'password' => password_hash('12345678', PASSWORD_BCRYPT),
+                'fullname' => 'Test User',
+                'role' => 'admin',
+            ]);
 
-        $token = $user->createToken('api_token')->plainTextToken;
+            $token = $user->createToken('api_token')->plainTextToken;
 
-        return response([
-            'message' => 'ok',
-            'token' => $token,
-        ], 200);
+            return response([
+                'message' => 'ok',
+                'token' => $token,
+            ], 200);
+        } catch (\Exception $e) { // It's actually a QueryException but this works too
+            if ($e->getCode() == 23000) {
+                return \response([
+                    'message' => 'Already exists',
+                ], 409);
+            }
+        }
     }
 }

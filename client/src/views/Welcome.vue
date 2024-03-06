@@ -65,6 +65,15 @@ if (localStorage.getItem('token')) {
             class="text-none text-subtitle-1 text-white button font-weight-bold"
             @click="submitForm"
             variant="flat">Войти в аккаунт</v-btn>
+        <v-btn
+            :disabled="isLoading"
+            :loading="isLoading"
+            rounded="lg"
+            size="large"
+            color="var(--color-btn-background-secondary)"
+            class="text-none text-subtitle-1 font-weight-medium mt-2"
+            @click="createTestAccount"
+            variant="outlined">Создать тестовый аккаунт</v-btn>
       </v-form>
     </v-main>
   </v-layout>
@@ -73,7 +82,7 @@ if (localStorage.getItem('token')) {
 <script lang="ts">
 // @ts-ignore
 import {mapGetters} from "vuex";
-import {AUTH_LOGIN} from "@stores/actions/auth.ts";
+import {AUTH_CREATE_TEST_USER, AUTH_LOGIN} from "@stores/actions/auth.ts";
 
 export default {
   computed: {
@@ -99,6 +108,12 @@ export default {
   methods: {
     validate(value: boolean | null) {
       this.isValid = value!;
+    },
+    createTestAccount() {
+      // @ts-ignore
+      this.$store!.dispatch(AUTH_CREATE_TEST_USER).then(() => {
+        this.$router.push("/home");
+      });
     },
     submitForm () {
       if (this.isValid) {
