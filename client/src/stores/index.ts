@@ -1,8 +1,8 @@
 // @ts-ignore
 import {createStore} from "vuex";
 
-import authModule from "@stores/modules/auth.module.ts";
-import movementModule from "@stores/modules/movement.module.ts";
+import authModule from "@stores/modules/authModule.ts";
+import movementModule from "@stores/modules/movementModule.ts";
 
 export default createStore({
     modules: {

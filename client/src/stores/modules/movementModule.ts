@@ -3,10 +3,12 @@ import {
     MOVEMENT_CREATE,
     MOVEMENT_DATA,
     MOVEMENT_ERROR,
-    MOVEMENT_GET_LIST, MOVEMENT_GET_MORE, MOVEMENT_MORE_DATA,
-    MOVEMENT_SUCCESS, MOVEMENT_UPDATE_STATUS
+    MOVEMENT_GET_LIST,
+    MOVEMENT_SUCCESS,
+    MOVEMENT_UPDATE_STATUS,
 } from "@stores/actions/movements.ts";
 import api from "@api/index.ts";
+import {InfiniteScrollDoneFn} from "@types/vuetifyExtended";
 
 type MovementState = {
     status: string,
@@ -43,25 +45,25 @@ const actions = {
             });
     },
     // Получает список всех перемещений со смещением offset
-    [MOVEMENT_GET_LIST]: async ({ commit } : { commit: Function, dispatch?: Function }, offset: number) => {
+    [MOVEMENT_GET_LIST]: async ({ commit } : { commit: Function, dispatch?: Function }, { offset, done } : { offset: number, done: InfiniteScrollDoneFn | undefined }) => {
         commit(MOVEMENT_GET_LIST);
         await api.movement.getList(offset)
             .then((resp) => {
+                if (done !== undefined) {
+                    if (resp.data.data.length > 0) {
+                        console.log('ok');
+                        done('ok');
+                    } else {
+                        console.log('empty');
+                        done('empty');
+                    }
+                    console.log('ok');
+                }
                 commit(MOVEMENT_DATA, resp.data);
             })
             .catch(error => {
                 commit(MOVEMENT_ERROR, error);
-            });
-    },
-    // Получает дополнительный список всех перемещений с offset
-    [MOVEMENT_GET_MORE]: async ({ commit } : { commit: Function, dispatch?: Function }, offset: number) => {
-        commit(MOVEMENT_GET_LIST);
-        await api.movement.getList(offset)
-            .then((resp) => {
-                commit(MOVEMENT_MORE_DATA, resp.data);
-            })
-            .catch(error => {
-                commit(MOVEMENT_ERROR, error);
+
             });
     },
     // Обновляет статус перемещения
@@ -97,11 +99,6 @@ const mutations = {
         } else {
             state.movements.push((resp as { data: MovementModel }).data);
         }
-    },
-    [MOVEMENT_MORE_DATA]: (state: MovementState, resp: unknown) => {
-        state.status = "success";
-        console.log(resp);
-        state.newMovements = (resp as { data: MovementModel[] }).data;
     },
     [MOVEMENT_ERROR]: (state: MovementState, error: Error) => {
         console.log(error);

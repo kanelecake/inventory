@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import "@styles/views/Home.scss";
 import Logo from "@components/Logo.vue";
-import {ArrowRight} from "lucide-vue-next";
+import {ArrowRight, NotepadTextDashed} from "lucide-vue-next";
 import MovementItem from "@components/MovementItem.vue";
+
+// @ts-ignore
 import {useStore} from "vuex";
 import {MOVEMENT_GET_LIST} from "@stores/actions/movements.ts";
+
+const store = useStore();
+store.dispatch(MOVEMENT_GET_LIST, { offset: 0 });
 </script>
 
 <template>
@@ -90,16 +95,22 @@ import {MOVEMENT_GET_LIST} from "@stores/actions/movements.ts";
       </v-form>
 
       <!-- Список перемещений -->
-      <v-infinite-scroll class="list"
-                         height="calc(100vh - 24px - 4rem)"
-                         :items="items"
-                         side="end"
-                         @load="load">
-        <MovementItem v-for="(item, index) in items"
-                      :key="index"
-                      :data="item" />
-        <template v-slot:empty>
-          <v-alert type="warning">Пока больше нет перемещений</v-alert>
+      <v-infinite-scroll
+          class="list"
+          height="calc(100vh - 24px - 4rem)"
+          side="end"
+          @load="loadMoreData">
+        <MovementItem
+            v-for="(item, index) in items"
+            :key="index"
+            :data="item" />
+
+        <template v-slot:empty class="py-4 gp">
+          <v-alert
+              type="info"
+              :icon="NotepadTextDashed"
+              color="var(--color-btn-background-secondary)"
+              variant="tonal"><b>Вы просмотрели все перемещения</b></v-alert>
         </template>
       </v-infinite-scroll>
     </v-main>
@@ -108,19 +119,20 @@ import {MOVEMENT_GET_LIST} from "@stores/actions/movements.ts";
 
 <script lang="ts">
 // @ts-ignore
-import {mapGetters} from "vuex";
-import {MOVEMENT_CREATE, MOVEMENT_GET_MORE,} from "@stores/actions/movements.ts";
+import { mapGetters } from "vuex";
+import {MOVEMENT_CREATE, MOVEMENT_GET_LIST} from "@stores/actions/movements.ts";
+import {InfiniteScrollDoneFn, InfiniteScrollSide, InfiniteScrollStatus} from "@types/vuetifyExtended";
 
 export default {
   computed: {
-    ...mapGetters(["getMovements", "getNewMovements", "isDataLoaded", "isError"]),
+    ...mapGetters(["getMovements", "isDataLoaded", "isError"]),
     items: function () {
       return this.getMovements;
     },
   },
   data() {
     return {
-      currentOffset: 0,
+      currentOffset: 10,
       isValid: false,
       fields: {
         inventory_number: '',
@@ -149,8 +161,9 @@ export default {
         this.$refs.form.resetValidation();
       }
     },
-    load({ done } : { done: (value: unknown) => {} }) {
-      // implement me!!
+    loadMoreData({ done } : { side: InfiniteScrollSide, done: InfiniteScrollDoneFn }) {
+      this.$store.dispatch(MOVEMENT_GET_LIST, { offset: this.currentOffset, done: done });
+      this.currentOffset += 10;
     }
   },
 }

@@ -22,7 +22,8 @@
       "@components/*": ["./components/*"],
       "@routes/*": ["./routes/*"],
       "@stores/*": ["./stores/*"],
-      "@views/*": ["./views/*"]
+      "@views/*": ["./views/*"],
+      "@types/*": ["./types/*"],
     },
 
     /* Linting */
